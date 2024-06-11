@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders</title>
+    <link rel="stylesheet" href="orders.css">
+</head>
+<body>
+
+<header>
+    Inventory Management Dashboard
+</header>
+
+<div class="container">
+    <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="inventory.html">Inventory</a>
+        <a href="orders.html">Orders</a>
+        <a href="products.html">Products</a>
+        <a href="customers.html">Customers</a>
+        <a href="reports.html">Reports</a>
+        <a href="settings.html">Settings</a>
+        <a href="login.html">Logout</a>
+    </nav>
+    
+    <main>
+        <div class="orders-container">
+            <h1>Orders</h1>
+            <div class="crud-buttons">
+                <button onclick="toggleAddOrderForm()">Add</button>
+            </div>
+            <div class="add-order-form">
+                <!-- Form for adding new order (will be shown/hidden dynamically) -->
+                <input type="number" name="orderId" placeholder="Order ID" required>
+                <input type="number" name="customerId" placeholder="Customer ID" required>
+                <input type="number" name="productId" placeholder="Product ID" required>
+                <input type="number" name="quantity" placeholder="Quantity" required>
+                <input type="number" name="price" placeholder="Price" required>
+                <button>Add Order</button>
+            </div>
+            <input type="text" id="search" placeholder="Search...">
+            <div class="orders-list">
+                <!-- Orders will be displayed here -->
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="orders.js"></script>
+</body>
+</html>

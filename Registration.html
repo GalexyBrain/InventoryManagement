@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management System</title>
+    <link rel="stylesheet" href="registration.css">
+</head>
+<body>
+
+    <form id="registrationForm" action="login.html" method="POST">
+        <h1>Inventory Management System</h1>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required>
+        <div class="error" id="usernameError"></div>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+        <div class="error" id="emailError"></div>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+        <div class="error" id="passwordError"></div>
+
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required>
+        <div class="error" id="confirmPasswordError"></div>
+
+        <input type="submit" value="Register">
+    </form>
+
+</body>
+</html>
