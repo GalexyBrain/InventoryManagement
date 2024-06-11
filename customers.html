@@ -30,7 +30,7 @@
         <div class="crud-buttons">
             <button onclick="toggleAddCustomerForm()">Add Customer</button>
         </div>
-        <div class="add-customer-form">
+        <div class="add-customer-form" id="addCustomerForm" style="display: none;">
             <input type="text" name="customerID" placeholder="Customer ID" required>
             <input type="text" name="customerName" placeholder="Customer Name" required>
             <input type="email" name="customerEmail" placeholder="Customer Email" required>
@@ -42,6 +42,17 @@
         </div>
     </main>
 </div>
+
+<script>
+    function toggleAddCustomerForm() {
+        const form = document.getElementById('addCustomerForm');
+        if (form.style.display === 'none' || form.style.display === '') {
+            form.style.display = 'block';
+        } else {
+            form.style.display = 'none';
+        }
+    }
+</script>
 
 <script src="customers.js"></script>
 </body>
