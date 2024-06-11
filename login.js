@@ -24,21 +24,3 @@ document.addEventListener("DOMContentLoaded", function() {
         })
         .catch(error => console.error('Error:', error));
     });
-
-    function fetchMetrics() {
-        fetch('http://127.0.0.1:5000/dashboard-metrics', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            document.querySelector('.metric.products p').textContent = data.products;
-            document.querySelector('.metric.orders p').textContent = data.orders;
-            document.querySelector('.metric.customers p').textContent = data.customers;
-            document.querySelector('.metric.revenue p').textContent = `Rs ${data.revenue}`;
-        })
-        .catch(error => console.error('Error:', error));
-    }
-});
