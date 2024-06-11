@@ -8,26 +8,61 @@
 </head>
 <body>
 
-    <form id="registrationForm" action="login.html" method="POST">
-        <h1>Inventory Management System</h1>
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" required>
-        <div class="error" id="usernameError"></div>
+<form id="registrationForm">
+    <h1>Inventory Management System</h1>
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" required>
+    <div class="error" id="usernameError"></div>
 
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" required>
-        <div class="error" id="emailError"></div>
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" required>
+    <div class="error" id="emailError"></div>
 
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required>
-        <div class="error" id="passwordError"></div>
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" required>
+    <div class="error" id="passwordError"></div>
 
-        <label for="confirmPassword">Confirm Password</label>
-        <input type="password" id="confirmPassword" name="confirmPassword" required>
-        <div class="error" id="confirmPasswordError"></div>
+    <label for="confirmPassword">Confirm Password</label>
+    <input type="password" id="confirmPassword" name="confirmPassword" required>
+    <div class="error" id="confirmPasswordError"></div>
 
-        <input type="submit" value="Register">
-    </form>
+    <input type="submit" value="Register">
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const registrationForm = document.getElementById("registrationForm");
+
+        registrationForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById("username").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+
+            if (password !== confirmPassword) {
+                document.getElementById("confirmPasswordError").textContent = "Passwords do not match";
+                return;
+            }
+
+            fetch('http://127.0.0.1:5000/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username: username, email: email, password: password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                window.location.href = 'login.html'; // Redirect to login page
+
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
 
 </body>
 </html>
