@@ -5,3 +5,4 @@ To install requirments execute the following command after downloading requirmen
   - execute `pip install -r requirements.txt` in the command prompt
   - Make a folder called templates,
     - This is where all the `.html`, `.css`, `.js` files go
+  - In vs code download the extension `liveServer` and run the first page through it
