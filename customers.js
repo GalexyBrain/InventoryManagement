@@ -1,11 +1,7 @@
-// Sample data for customers with unique IDs
-let customers = [
-    { id: 1, name: "John Doe", email: "john@example.com", phone: "123-456-7890" },
-    { id: 2, name: "Jane Smith", email: "jane@example.com", phone: "987-654-3210" }
-];
+let customers = [];
 
 // Function to display customers
-function displayCustomers(filteredCustomers = customers) {
+function displayCustomers(filteredCustomers = []) {
     const customerList = document.querySelector('.customer-list');
     customerList.innerHTML = '';
 
@@ -30,11 +26,11 @@ function displayCustomers(filteredCustomers = customers) {
 
         const editButton = document.createElement('button');
         editButton.textContent = 'Edit';
-        editButton.onclick = () => editCustomer(index);
+        editButton.onclick = () => editCustomer(customer.id);
 
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
-        deleteButton.onclick = () => deleteCustomer(index);
+        deleteButton.onclick = () => deleteCustomer(customer.id);
 
         customerInfo.appendChild(customerId);
         customerInfo.appendChild(customerName);
@@ -48,74 +44,131 @@ function displayCustomers(filteredCustomers = customers) {
     });
 }
 
-// Function to toggle visibility of add customer form
-function toggleAddCustomerForm() {
-    const addCustomerForm = document.querySelector('.add-customer-form');
-    addCustomerForm.style.display = addCustomerForm.style.display === 'none' ? 'block' : 'none';
+// Function to fetch customers from API
+async function fetchCustomers() {
+    try {
+        const response = await fetch('http://127.0.0.1:5000/customers');
+        const data = await response.json();
+        customers = data.customers;  // Assign fetched customers to the global variable
+        displayCustomers(customers);
+    } catch (error) {
+        console.error('Error fetching customers:', error);
+    }
 }
 
 // Function to add a new customer
-function addCustomer() {
+async function addCustomer() {
     const customerID = document.querySelector('input[name="customerID"]').value;
     const customerName = document.querySelector('input[name="customerName"]').value;
     const customerEmail = document.querySelector('input[name="customerEmail"]').value;
     const customerPhone = document.querySelector('input[name="customerPhone"]').value;
 
-    const newCustomer = {
-        id: customerID,
-        name: customerName,
-        email: customerEmail,
-        phone: customerPhone
-    };
+    try {
+        const response = await fetch('http://127.0.0.1:5000/customers', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify({
+                id: customerID,
+                name: customerName,
+                email: customerEmail,
+                phone: customerPhone
+            })
+        });
 
-    customers.push(newCustomer);
-    displayCustomers();
-
-    // Reset the form fields
-    document.querySelector('input[name="customerID"]').value = customers.length ? customers[customers.length - 1].id + 1 : 1;
-    document.querySelector('input[name="customerName"]').value = '';
-    document.querySelector('input[name="customerEmail"]').value = '';
-    document.querySelector('input[name="customerPhone"]').value = '';
-
-    // Hide the form after adding the customer
-    toggleAddCustomerForm();
+        if (response.ok) {
+            fetchCustomers();
+            // Reset the form fields
+            document.querySelector('input[name="customerID"]').value = '';
+            document.querySelector('input[name="customerName"]').value = '';
+            document.querySelector('input[name="customerEmail"]').value = '';
+            document.querySelector('input[name="customerPhone"]').value = '';
+        } else if (response.status === 400) {
+            const data = await response.json();
+            alert(data.message);  // Display alert with error message
+            console.error('Failed to add customer:', data.message);
+        } else {
+            alert('Failed to add customer');
+            console.error('Failed to add customer:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error adding customer:', error);
+    }
 }
-
 // Function to edit a customer
-function editCustomer(index) {
-    const customer = customers[index];
-    
+async function editCustomer(customerId) {
+    const customer = customers.find(cust => cust.id === customerId);
+
     const newCustomerId = parseInt(prompt("Enter new ID:", customer.id));
     const newCustomerName = prompt("Enter new name:", customer.name);
     const newCustomerEmail = prompt("Enter new email:", customer.email);
     const newCustomerPhone = prompt("Enter new phone:", customer.phone);
 
-    if (!isNaN(newCustomerId) && newCustomerId !== null) customer.id = newCustomerId;
-    if (newCustomerName !== null) customer.name = newCustomerName;
-    if (newCustomerEmail !== null) customer.email = newCustomerEmail;
-    if (newCustomerPhone !== null) customer.phone = newCustomerPhone;
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/customers/${customerId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify({
+                id: newCustomerId,
+                name: newCustomerName,
+                email: newCustomerEmail,
+                phone: newCustomerPhone
+            })
+        });
 
-    displayCustomers();
+        if (response.ok) {
+            fetchCustomers();
+        } else if (response.status === 400) {
+            alert('Customer does not exist.');
+            console.error('Failed to edit customer:', response.statusText);
+        } else {
+            console.error('Failed to edit customer:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error editing customer:', error);
+    }
 }
 
 // Function to delete a customer
-function deleteCustomer(index) {
+async function deleteCustomer(customerId) {
     if (confirm("Are you sure you want to delete this customer?")) {
-        customers.splice(index, 1);
-        displayCustomers();
+        try {
+            const response = await fetch(`http://127.0.0.1:5000/customers/${customerId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Access-Control-Allow-Origin': '*'
+                }
+            });
+
+            if (response.ok) {
+                fetchCustomers();
+            } else if (response.status === 400) {
+                alert('Customer does not exist.');
+                console.error('Failed to delete customer:', response.statusText);
+            } else {
+                console.error('Failed to delete customer:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error deleting customer:', error);
+        }
     }
 }
 
 // Implement search functionality
-document.getElementById('search').addEventListener('input', function() {
+document.getElementById('search').addEventListener('input', function () {
     const searchText = this.value.toLowerCase();
     const filteredCustomers = customers.filter(customer => {
-        return customer.name.toLowerCase().includes(searchText) || 
-            customer.email.toLowerCase().includes(searchText) || 
+        return customer.name.toLowerCase().includes(searchText) ||
+            customer.email.toLowerCase().includes(searchText) ||
             customer.phone.toLowerCase().includes(searchText);
     });
     displayCustomers(filteredCustomers);
 });
 
 // Initial display of customers
-displayCustomers();
+fetchCustomers();

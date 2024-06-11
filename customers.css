@@ -95,17 +95,26 @@ h2 {
 
 .crud-buttons {
     margin-bottom: 20px;
+    text-align: center;
 }
 
 .add-customer-form {
-    display: none; /* Initially hide the form */
+    display: none;
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
 }
 
 .add-customer-form input[type="text"],
 .add-customer-form input[type="email"],
 .add-customer-form input[type="tel"],
 .add-customer-form button {
-    margin: 10px 0;
+    display: block;
+    width: calc(100% - 20px);
+    margin: 10px auto;
     padding: 10px;
     font-size: 16px;
     border: 1px solid #ccc;
@@ -129,4 +138,6 @@ h2 {
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
 }
