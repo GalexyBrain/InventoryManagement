@@ -21,27 +21,12 @@
         <a href="customers.html">Customers</a>
         <a href="reports.html">Reports</a>
         <a href="settings.html">Settings</a>
-        <a href="logout.html">Logout</a>
+        <a href="login.html">Logout</a>
     </nav>
     
     <main>
-        <div class="metrics">
-            <a href="products.html" class="metric">
-                <h3>Products</h3>
-                <p>0</p>
-            </a>
-            <a href="orders.html" class="metric">
-                <h3>Orders</h3>
-                <p>0</p>
-            </a>
-            <a href="customers.html" class="metric">
-                <h3>Customers</h3>
-                <p>0</p>
-            </a>
-            <a href="revenue.html" class="metric">
-                <h3>Revenue</h3>
-                <p>Rs 0</p>
-            </a>
+        <div class="metrics" id="metricsContainer">
+            <!-- Metrics will be dynamically added here -->
         </div>
 
         <div class="welcome">
@@ -50,6 +35,29 @@
         </div>
     </main>
 </div>
+
+<script>
+    // Fetch data from API and update dashboard metrics
+    fetch('http://127.0.0.1:5000/metrics')
+        .then(response => response.json())
+        .then(data => {
+            const metricsContainer = document.getElementById('metricsContainer');
+
+            // Loop through the metrics data and create HTML elements for each metric
+            for (const key in data) {
+                if (data.hasOwnProperty(key)) {
+                    const value = data[key];
+                    const metricElement = document.createElement('div');
+                    metricElement.classList.add('metric');
+                    metricElement.innerHTML = `
+                        <h3>${key.replace('_', ' ').toUpperCase()}</h3>
+                        <p>${value}</p>
+                    `;
+                    metricsContainer.appendChild(metricElement);
+                }
+            }
+        });
+</script>
 
 </body>
 </html>
