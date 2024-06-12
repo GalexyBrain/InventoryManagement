@@ -1,52 +1,95 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Sample inventory items
-    const items = [
-        { id: 1, name: 'Product A', quantity: 50, price: 10 },
-        { id: 2, name: 'Product B', quantity: 30, price: 20 }
-    ];
+let inventory = [];
 
+document.querySelector('.add-item-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const itemId = e.target.elements.productId.value;
+    const itemName = e.target.elements.itemName.value;
+    const quantity = e.target.elements.quantity.value;
+    const price = e.target.elements.price.value;
+
+    try {
+        const response = await fetch('http://127.0.0.1:5000/inventory', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id: itemId, name: itemName, qty: quantity, price: price })
+        });
+
+        if (response.ok) {
+            alert('Item added successfully.');
+            e.target.reset();
+            fetchInventory();
+        } else {
+            alert('Failed to add item.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+
+async function fetchInventory() {
+    try {
+        const response = await fetch('http://127.0.0.1:5000/inventory');
+        const data = await response.json();
+        inventory = data.inventory;
+        renderInventory();
+    } catch (error) {
+        console.error('Error fetching inventory:', error);
+    }
+}
+
+function renderInventory() {
     const inventoryList = document.querySelector('.inventory-list');
+    inventoryList.innerHTML = '';
 
-    // Function to add item
-    function addItem(item) {
-        const newItem = document.createElement('div');
-        newItem.className = 'inventory-item';
-        newItem.innerHTML = `
+    inventory.forEach((item, index) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.classList.add('inventory-item');
+
+        itemDiv.innerHTML = `
             <div class="item-info">
-                <h2>Product ID: ${item.id}</h2>
-                <h2>Item Name: ${item.name}</h2>
-                <p>Quantity: ${item.quantity}</p>
-                <p>Price: $${item.price}</p>
+                <p><strong>ID:</strong> ${item.Id}</p>
+                <p><strong>Name:</strong> ${item.Name}</p>
+                <p><strong>Quantity:</strong> ${item.Quantity}</p>
+                <p><strong>Price:</strong> ₹${item.Price}</p>
             </div>
         `;
-        inventoryList.appendChild(newItem);
-    }
 
-    // Add initial items
-    items.forEach(item => addItem(item));
-
-    // Event listener for adding a new item
-    const addItemForm = document.querySelector('.add-item-form');
-    addItemForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const productId = this.productId.value;
-        const itemName = this.itemName.value;
-        const quantity = this.quantity.value;
-        const price = this.price.value;
-        addItem({ id: productId, name: itemName, quantity: quantity, price: price });
-        this.reset();
+        inventoryList.appendChild(itemDiv);
     });
+}
 
-    // Search functionality
-    document.getElementById('search').addEventListener('input', function() {
-        const searchText = this.value.toLowerCase();
-        const filteredItems = items.filter(item => {
-            return item.name.toLowerCase().includes(searchText) || 
-                   item.id.toString().includes(searchText) || 
-                   item.price.toString().includes(searchText) || 
-                   item.quantity.toString().includes(searchText);
-        });
-        inventoryList.innerHTML = '';
-        filteredItems.forEach(item => addItem(item));
+// Implement search functionality
+document.getElementById('search').addEventListener('input', function () {
+    const searchText = this.value.toLowerCase();
+    const filteredInventory = inventory.filter(item => {
+        return item.Name.toLowerCase().includes(searchText);
     });
+    renderFilteredInventory(filteredInventory);
 });
+
+function renderFilteredInventory(filteredInventory) {
+    const inventoryList = document.querySelector('.inventory-list');
+    inventoryList.innerHTML = '';
+
+    filteredInventory.forEach((item, index) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.classList.add('inventory-item');
+
+        itemDiv.innerHTML = `
+            <div class="item-info">
+                <p><strong>ID:</strong> ${item.Id}</p>
+                <p><strong>Name:</strong> ${item.Name}</p>
+                <p><strong>Quantity:</strong> ${item.Quantity}</p>
+                <p><strong>Price:</strong> ₹${item.Price}</p>
+            </div>
+        `;
+
+        inventoryList.appendChild(itemDiv);
+    });
+}
+
+// Fetch inventory on initial load
+fetchInventory();

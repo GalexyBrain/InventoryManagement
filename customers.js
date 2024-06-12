@@ -13,24 +13,24 @@ function displayCustomers(filteredCustomers = []) {
         customerInfo.classList.add('customer-info');
 
         const customerId = document.createElement('p');
-        customerId.textContent = `ID: ${customer.id}`;
+        customerId.textContent = `ID: ${customer.Id}`;
 
         const customerName = document.createElement('h3');
-        customerName.textContent = customer.name;
+        customerName.textContent = customer.Name;
 
         const customerEmail = document.createElement('p');
-        customerEmail.textContent = `Email: ${customer.email}`;
+        customerEmail.textContent = `Email: ${customer.Email}`;
 
         const customerPhone = document.createElement('p');
-        customerPhone.textContent = `Phone: ${customer.phone}`;
+        customerPhone.textContent = `Phone: ${customer.Phone}`;
 
         const editButton = document.createElement('button');
         editButton.textContent = 'Edit';
-        editButton.onclick = () => editCustomer(customer.id);
+        editButton.onclick = () => editCustomer(customer.Id);
 
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
-        deleteButton.onclick = () => deleteCustomer(customer.id);
+        deleteButton.onclick = () => deleteCustomer(customer.Id);
 
         customerInfo.appendChild(customerId);
         customerInfo.appendChild(customerName);
@@ -71,10 +71,10 @@ async function addCustomer() {
                 'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify({
-                id: customerID,
-                name: customerName,
-                email: customerEmail,
-                phone: customerPhone
+                Id: customerID,
+                Name: customerName,
+                Email: customerEmail,
+                Phone: customerPhone
             })
         });
 
@@ -97,14 +97,14 @@ async function addCustomer() {
         console.error('Error adding customer:', error);
     }
 }
+
 // Function to edit a customer
 async function editCustomer(customerId) {
-    const customer = customers.find(cust => cust.id === customerId);
+    const customer = customers.find(cust => cust.Id === customerId);
 
-    const newCustomerId = parseInt(prompt("Enter new ID:", customer.id));
-    const newCustomerName = prompt("Enter new name:", customer.name);
-    const newCustomerEmail = prompt("Enter new email:", customer.email);
-    const newCustomerPhone = prompt("Enter new phone:", customer.phone);
+    const newCustomerName = prompt("Enter new name:", customer.Name);
+    const newCustomerEmail = prompt("Enter new email:", customer.Email);
+    const newCustomerPhone = prompt("Enter new phone:", customer.Phone);
 
     try {
         const response = await fetch(`http://127.0.0.1:5000/customers/${customerId}`, {
@@ -114,10 +114,10 @@ async function editCustomer(customerId) {
                 'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify({
-                id: newCustomerId,
-                name: newCustomerName,
-                email: newCustomerEmail,
-                phone: newCustomerPhone
+                Id: customerId,
+                Name: newCustomerName,
+                Email: newCustomerEmail,
+                Phone: newCustomerPhone
             })
         });
 
@@ -163,9 +163,9 @@ async function deleteCustomer(customerId) {
 document.getElementById('search').addEventListener('input', function () {
     const searchText = this.value.toLowerCase();
     const filteredCustomers = customers.filter(customer => {
-        return customer.name.toLowerCase().includes(searchText) ||
-            customer.email.toLowerCase().includes(searchText) ||
-            customer.phone.toLowerCase().includes(searchText);
+        return customer.Name.toLowerCase().includes(searchText) ||
+            customer.Email.toLowerCase().includes(searchText) ||
+            customer.Phone.toLowerCase().includes(searchText);
     });
     displayCustomers(filteredCustomers);
 });

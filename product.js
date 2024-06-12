@@ -1,6 +1,6 @@
 let inventory = [];
 
-document.querySelector('.add-item-form').addEventListener('submit', function(e) {
+document.querySelector('.add-item-form').addEventListener('submit', async function (e) {
     e.preventDefault();
 
     const itemId = e.target.elements.itemId.value;
@@ -8,16 +8,36 @@ document.querySelector('.add-item-form').addEventListener('submit', function(e) 
     const quantity = e.target.elements.quantity.value;
     const price = e.target.elements.price.value;
 
-    addItemToInventory(itemId, itemName, quantity, price);
+    try {
+        const response = await fetch('http://127.0.0.1:5000/inventory', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id: itemId, name: itemName, qty: quantity, price: price })
+        });
 
-    alert('Item added successfully.');
-    e.target.reset();
+        if (response.ok) {
+            alert('Item added successfully.');
+            e.target.reset();
+            fetchInventory();
+        } else {
+            alert('Failed to add item.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
 });
 
-function addItemToInventory(id, name, qty, price) {
-    const item = { id, name, qty, price };
-    inventory.push(item);
-    renderInventory();
+async function fetchInventory() {
+    try {
+        const response = await fetch('http://127.0.0.1:5000/inventory');
+        const data = await response.json();
+        inventory = data.inventory;
+        renderInventory();
+    } catch (error) {
+        console.error('Error fetching inventory:', error);
+    }
 }
 
 function renderInventory() {
@@ -27,13 +47,13 @@ function renderInventory() {
     inventory.forEach((item, index) => {
         const itemDiv = document.createElement('div');
         itemDiv.classList.add('inventory-item');
-        
+
         itemDiv.innerHTML = `
             <div class="item-info">
-                <p><strong>ID:</strong> ${item.id}</p>
-                <p><strong>Name:</strong> ${item.name}</p>
-                <p><strong>Quantity:</strong> ${item.qty}</p>
-                <p><strong>Price:</strong> $${item.price}</p>
+                <p><strong>ID:</strong> ${item.Id}</p>
+                <p><strong>Name:</strong> ${item.Name}</p>
+                <p><strong>Quantity:</strong> ${item.Quantity}</p>
+                <p><strong>Price:</strong> ₹${item.Price}</p>
             </div>
             <button class="edit-btn" onclick="editItem(${index})">Edit</button>
             <button class="restock-btn" onclick="restockItem(${index})">Restock</button>
@@ -44,38 +64,75 @@ function renderInventory() {
     });
 }
 
-function editItem(index) {
+async function editItem(index) {
     const item = inventory[index];
-    const newItemName = prompt("Enter new name:", item.name);
-    const newQty = prompt("Enter new quantity:", item.qty);
-    const newPrice = prompt("Enter new price:", item.price);
+    const newItemName = prompt("Enter new name:", item.Name);
+    const newPrice = prompt("Enter new price:", item.Price);
 
-    if (newItemName !== null) item.name = newItemName;
-    if (newQty !== null) item.qty = newQty;
-    if (newPrice !== null) item.price = newPrice;
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/inventory/${item.Id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name: newItemName, price: newPrice })
+        });
 
-    renderInventory();
-}
-
-function restockItem(index) {
-    const item = inventory[index];
-    const additionalQty = prompt("Enter quantity to add:", 0);
-
-    if (additionalQty !== null) {
-        item.qty = parseInt(item.qty) + parseInt(additionalQty);
-        renderInventory();
+        if (response.ok) {
+            fetchInventory();
+        } else {
+            alert('Failed to edit item.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
     }
 }
 
-function deleteItem(index) {
+async function restockItem(index) {
+    const item = inventory[index];
+    const additionalQty = prompt("Enter quantity to add:", 0);
+
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/inventory/${item.Id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ qty: additionalQty, price: item.Price, id: item.Id })
+        });
+
+        if (response.ok) {
+            fetchInventory();
+        } else {
+            alert('Failed to restock item.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+async function deleteItem(index) {
+    const item = inventory[index];
+
     if (confirm("Are you sure you want to delete this item?")) {
-        inventory.splice(index, 1);
-        renderInventory();
+        try {
+            const response = await fetch(`http://127.0.0.1:5000/inventory/${item.Id}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                fetchInventory();
+            } else {
+                alert('Failed to delete item.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
     }
 }
 
 // Implement search functionality
-document.getElementById('search').addEventListener('input', function() {
+document.getElementById('search').addEventListener('input', function () {
     const searchText = this.value.toLowerCase();
     const filteredInventory = inventory.filter(item => {
         return item.name.toLowerCase().includes(searchText);
@@ -90,7 +147,7 @@ function renderFilteredInventory(filteredInventory) {
     filteredInventory.forEach((item, index) => {
         const itemDiv = document.createElement('div');
         itemDiv.classList.add('inventory-item');
-        
+
         itemDiv.innerHTML = `
             <div class="item-info">
                 <p><strong>ID:</strong> ${item.id}</p>
@@ -107,10 +164,5 @@ function renderFilteredInventory(filteredInventory) {
     });
 }
 
-// Add sample data initially
-addSampleData();
-
-function addSampleData() {
-    addItemToInventory('1', 'Sample Item 1', 10, 20);
-    addItemToInventory('2', 'Sample Item 2', 5, 30);
-}
+// Fetch inventory on initial load
+fetchInventory();

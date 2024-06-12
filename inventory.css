@@ -43,7 +43,8 @@ nav a {
     font-size: 18px;
     padding: 10px;
     transition: background-color 0.3s, padding-left 0.3s;
-    border-radius: 5px; /* Added border radius */
+    border-radius: 5px;
+    /* Added border radius */
 }
 
 nav a:hover {
@@ -63,8 +64,10 @@ main {
 /* Inventory container styles */
 .inventory-container {
     padding: 20px;
-    border: 1px solid #ccc; /* Added border */
-    border-radius: 5px; /* Added border radius */
+    border: 1px solid #ccc;
+    /* Added border */
+    border-radius: 5px;
+    /* Added border radius */
 }
 
 /* Inventory list styles */
@@ -116,8 +119,10 @@ main {
 .add-item-form input[type="number"],
 .add-item-form button {
     margin-right: 10px;
-    border-radius: 5px; /* Added border radius */
-    border: 1px solid #ccc; /* Added border */
+    border-radius: 5px;
+    /* Added border radius */
+    border: 1px solid #ccc;
+    /* Added border */
 }
 
 .add-item-form button {
@@ -131,4 +136,23 @@ main {
 
 .add-item-form button:hover {
     background-color: #218838;
+}
+
+#search {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    outline: none;
+}
+
+#search::placeholder {
+    color: #999;
+}
+
+#search:focus {
+    border-color: #66afe9;
+    box-shadow: 0 0 0 2px rgba(102, 175, 233, 0.6);
 }
