@@ -141,3 +141,66 @@ h2 {
     width: 100%;
     box-sizing: border-box;
 }
+
+.add-customer-form button {
+    display: block;
+    width: calc(100% - 20px);
+    margin: 10px auto;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.add-customer-form button {
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.add-customer-form button:hover {
+    background-color: #0056b3;
+}
+
+/* Button styles */
+button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+/* Specific button styles */
+.restock-btn {
+    background-color: #28a745;
+    margin-right: 10px;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+}
+
+.edit-btn {
+    background-color: #ffc107;
+}
+
+.restock-btn:hover {
+    background-color: #218838;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+
+.edit-btn:hover {
+    background-color: #e0a800;
+}

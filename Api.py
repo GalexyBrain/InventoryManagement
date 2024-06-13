@@ -3,9 +3,19 @@ from flask import Flask, request, jsonify
 import mysql.connector
 from mysql.connector import Error
 
-authenticated_users = set()  # Use set for faster membership checks
+authenticated_users = list()  # Use set for faster membership checks
 current_user = None
 
+
+def loginRequired(func):
+    def wrapper(*args, **kwargs):
+        # Check if user is logged in
+        if current_user not in authenticated_users:
+            return jsonify({'message': 'Login required'}), 401
+        return func(*args, **kwargs)
+    return wrapper
+
+@loginRequired
 def create_connection():
     connection = mysql.connector.connect(
         host='localhost',
@@ -15,13 +25,6 @@ def create_connection():
     )
     return connection
 
-def loginRequired(func):
-    def wrapper(*args, **kwargs):
-        # Check if user is logged in
-        if current_user not in authenticated_users:
-            return jsonify({'message': 'Login required'}), 401
-        return func(*args, **kwargs)
-    return wrapper
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -32,7 +35,12 @@ def login():
     username = data.get('username').strip()
     password = data.get('password').strip()
     
-    connection = create_connection()
+    connection = mysql.connector.connect(
+        host='localhost',
+        user='Thejus',
+        password='root',
+        database='InventoryManagement'
+    )
     cursor = connection.cursor(dictionary=True)
     
     try:
@@ -41,7 +49,7 @@ def login():
         user = cursor.fetchone()
 
         if user:
-            authenticated_users.add(username)
+            authenticated_users.append(username)
             global current_user
             current_user = username
             return jsonify({'message': 'Login successful!'}), 200
@@ -63,7 +71,12 @@ def register():
     password = data.get('password').strip()
     email = data.get('email').strip()
     
-    connection = create_connection()
+    connection = mysql.connector.connect(
+        host='localhost',
+        user='Thejus',
+        password='root',
+        database='InventoryManagement'
+    )
     cursor = connection.cursor(dictionary=True)
     
     try:
@@ -346,5 +359,39 @@ def add_order():
 
     return jsonify({'message': 'Order added successfully'}), 201
 
+@app.route('/update_settings', methods=['POST'])
+def update_settings():
+    data = request.json
+    username = data.get('username')
+    email = data.get('email')
+    current_password = data.get('currentPassword')
+    new_password = data.get('newPassword')
+
+    connection = create_connection()
+    cursor = connection.cursor()
+
+    # Verify current password
+    cursor.execute("SELECT password FROM users WHERE userId = %s", (username,))
+    user = cursor.fetchone()
+    if not user or user[0] != current_password:
+        return jsonify({'message': 'Current password is incorrect'}), 400
+
+    # Update user settings
+    cursor.execute("UPDATE users SET email = %s, password = %s WHERE userId = %s",
+                   (email, new_password, username))
+    connection.commit()
+
+    cursor.close()
+    connection.close()
+
+    return jsonify({'message': 'Settings updated successfully'}), 200
+
+@app.route('/logout')
+def logout():
+    global current_user
+    authenticated_users.remove(current_user)
+    current_user = None
+    return jsonify({'message': 'Logout succesful'}), 200
+    
 if __name__ == '__main__':
     app.run(debug=True)
