@@ -1,7 +1,7 @@
 # InventoryManagement
 
 ## To install requirments execute the following command after downloading requirments.txt
-  - Navigate to the folder where the requirments.txt is stored
+  - Navigate to the folder where the requirments.txt is stored through cmd.
   - execute `pip install -r requirements.txt` in the command prompt.
  
 ## To run the program do the following :
