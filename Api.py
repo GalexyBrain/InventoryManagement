@@ -106,7 +106,7 @@ def get_metrics():
             (SELECT COUNT(Id) FROM items) AS products_count,
             (SELECT COUNT(Id) FROM transactions) AS orders_count,
             (SELECT COUNT(Id) FROM customers) AS customers_count,
-            (SELECT SUM(Price) FROM transactions) AS revenue
+            (SELECT SUM(Price * Quantity) FROM transactions) AS revenue
     ''')
     
     metrics_data = cursor.fetchone()
@@ -258,7 +258,6 @@ def restock_item(item_id):
     
     cursor.execute("SELECT MAX(Id) AS Id FROM transactions")
     id_result = cursor.fetchone()
-    print(id_result)
     id = id_result['Id'] if id_result['Id'] is not None else 0
     id += 1
 
@@ -279,6 +278,73 @@ def delete_item(item_id):
         return jsonify({'message': 'Item not found'}), 404
     return jsonify({'message': 'Item deleted successfully'})
 
+@app.route('/orders', methods=['GET'])
+def get_orders():
+    connection = create_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    cursor.execute("SELECT * FROM transactions")
+    orders = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return jsonify({'orders': orders})
+
+@app.route('/orders', methods=['POST'])
+def add_order():
+    data = request.json
+        
+    customerId = data['customerId']
+    productId = data['productId']
+    quantity = data['quantity']
+    orderType = data['type']  # 'p' for purchase, 's' for sale
+
+    connection = create_connection()
+    cursor = connection.cursor()
+    
+    cursor.execute("select max(id) as id from transactions ")
+    id_result = cursor.fetchone()
+    orderId = id_result[0] if id_result[0] is not None else 0
+    orderId += 1
+    
+    cursor.execute("select Price, Quantity from items where id = %s" % productId)
+    data = cursor.fetchone()
+    
+    if data is None:
+        return jsonify({'message': 'Product Id not found'}), 404
+    
+    price = data[0]
+    
+    availableQuantity = data[1]
+    
+    if availableQuantity < int(quantity):
+        return jsonify({'message': 'insufficient stock'}), 404
+    
+    
+    
+    if orderType in 's':
+        newQuantity = availableQuantity - int(quantity)
+    elif orderType in 'p':
+        newQuantity = availableQuantity + int(quantity)
+    
+    try:
+        cursor.execute(
+            "INSERT INTO transactions (id, customerId, productId, quantity, price, Type) VALUES (%s, %s, %s, %s, %s, '%s')" %(orderId, customerId, productId, quantity, price, orderType)
+        )
+        connection.commit()
+    
+        cursor.execute("UPDATE items SET quantity = %s WHERE id = %s" % (newQuantity, productId))
+        connection.commit()
+    except Exception:
+        cursor.close()
+        connection.close()
+        return jsonify({'message': 'SQL error'}), 404
+    
+    cursor.close()
+    connection.close()
+
+    return jsonify({'message': 'Order added successfully'}), 201
 
 if __name__ == '__main__':
     app.run(debug=True)

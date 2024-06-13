@@ -67,7 +67,8 @@ main {
 /* Add order form styles */
 .add-order-form input[type="number"],
 .add-order-form input[type="text"],
-.add-order-form button {
+.add-order-form button,
+.add-order-form select {
     margin: 10px 0;
     padding: 10px;
     font-size: 16px;
@@ -86,12 +87,27 @@ main {
     background-color: #0056b3;
 }
 
+/* Dropdown menu styles */
+.add-order-form select {
+    background-color: white;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.add-order-form select:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
 /* Order styles */
 .order {
     border: 1px solid #ccc;
     border-radius: 5px;
     margin-bottom: 20px;
     padding: 20px;
+    margin-right: calc(55%);
 }
 
 /* Order info styles */
@@ -106,4 +122,6 @@ main {
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
 }
