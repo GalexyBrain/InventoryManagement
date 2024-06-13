@@ -139,7 +139,7 @@ def add_customer():
     
     try:
         # Check if customer already exists
-        cursor.execute("SELECT * FROM customers WHERE id = %s", (new_customer['id'],))
+        cursor.execute("SELECT * FROM customers WHERE id = %s", (new_customer['Id'],))
         
         if cursor.fetchone() is not None:
             connection.close()
@@ -147,8 +147,7 @@ def add_customer():
         
         # Insert new customer
         cursor.execute(
-            "INSERT INTO customers (id, name, phone, email) VALUES (%s, %s, %s, %s)",
-            (new_customer['id'], new_customer['name'], new_customer['phone'], new_customer['email'])
+            "INSERT INTO customers (id, name, phone, email) VALUES (%s, '%s', %s, '%s')" %(new_customer['Id'], new_customer['Name'], new_customer['Phone'], new_customer['Email'])
         )
         
         connection.commit()
@@ -164,8 +163,8 @@ def update_customer(customer_id):
     updated_customer = request.json
     connection = create_connection()
     cursor = connection.cursor()
-    print("UPDATE customers SET name='%s', email='%s', phone=%s WHERE id=%s" %(updated_customer['name'], updated_customer['email'], updated_customer['phone'], customer_id))
-    cursor.execute("UPDATE customers SET name='%s', email='%s', phone=%s WHERE id=%s" %(updated_customer['name'], updated_customer['email'], updated_customer['phone'], customer_id))
+    print("UPDATE customers SET name='%s', email='%s', phone=%s WHERE id=%s" %(updated_customer['Name'], updated_customer['Email'], updated_customer['Phone'], customer_id))
+    cursor.execute("UPDATE customers SET name='%s', email='%s', phone=%s WHERE id=%s" %(updated_customer['Name'], updated_customer['Email'], updated_customer['Phone'], customer_id))
     connection.commit()
     connection.close()
     return jsonify({'message': 'Customer updated successfully'}), 200
@@ -177,6 +176,108 @@ def delete_customer(customer_id):
     cursor.execute('DELETE FROM customers WHERE id=%s', (customer_id,))
     connection.commit()
     return jsonify({'message': 'Customer deleted successfully'})
+
+
+@app.route('/inventory', methods=['GET'])
+def get_inventory():
+    connection = create_connection()
+    if not connection:
+        return jsonify({'message': 'Failed to connect to database'}), 500
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM items")
+    inventory = cursor.fetchall()
+    connection.close()
+    return jsonify({'inventory': inventory})
+
+@app.route('/inventory', methods=['POST'])
+def add_item():
+    data = request.json
+    connection = create_connection()
+    if not connection:
+        return jsonify({'message': 'Failed to connect to database'}), 500
+
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM items WHERE Id = %s", (data['id'],))
+    existing_item = cursor.fetchone()
+    
+    if existing_item:
+        connection.close()
+        return jsonify({'message': 'Item already exists'}), 400
+    
+    cursor.execute(
+        "INSERT INTO items (Id, Name, quantity, price) VALUES (%s, '%s', %s, %s)" %(data['id'], data['name'], data['qty'], data['price'])
+    )
+    connection.commit()
+    
+    cursor.execute("SELECT MAX(Id) FROM transactions")
+    id_result = cursor.fetchone()
+    id = id_result[0] if id_result[0] is not None else 0
+    id += 1
+
+    
+    cursor.execute("INSERT INTO transactions (Id, Price, Quantity, ProductId, Type) VALUES (%s, %s, %s, %s, 'p')" %(id, data['price'], data['qty'], data['id']))
+    connection.commit()
+    connection.close()
+    return jsonify({'message': 'Item added successfully'}), 201
+
+@app.route('/inventory/<int:item_id>', methods=['PUT'])
+def edit_item(item_id):
+    data = request.json
+    connection = create_connection()
+    if not connection:
+        return jsonify({'message': 'Failed to connect to database'}), 500
+    cursor = connection.cursor()
+    cursor.execute(
+        "UPDATE items SET Name=%s, price=%s WHERE Id=%s",
+        (data['name'], data['price'], item_id)
+    )
+    connection.commit()
+    connection.close()
+    if cursor.rowcount == 0:
+        return jsonify({'message': 'Item not found'}), 404
+    return jsonify({'message': 'Item updated successfully'})
+
+@app.route('/inventory/<int:item_id>', methods=['PATCH'])
+def restock_item(item_id):
+    data = request.json
+    connection = create_connection()
+    if not connection:
+        return jsonify({'message': 'Failed to connect to database'}), 500
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute("SELECT quantity FROM items WHERE Id=%s" %(item_id,))
+    item = cursor.fetchone()
+    if not item:
+        connection.close()
+        return jsonify({'message': 'Item not found'}), 404
+    new_qty = int(item['quantity']) + int(data['qty'])
+    cursor.execute("UPDATE items SET quantity=%s WHERE Id=%s", (new_qty, item_id))
+    connection.commit()
+        
+    if not connection:
+        return jsonify({'message': 'Failed to connect to database'}), 500
+    
+    cursor.execute("SELECT MAX(Id) AS Id FROM transactions")
+    id_result = cursor.fetchone()
+    print(id_result)
+    id = id_result['Id'] if id_result['Id'] is not None else 0
+    id += 1
+
+    
+    cursor.execute("INSERT INTO transactions (Id, Price, Quantity, ProductId, Type) VALUES (%s, %s, %s, %s, 'p')" %(id, data['price'], data['qty'], data['id']))
+
+    connection.commit()
+    connection.close()
+    return jsonify({'message': 'Item restocked successfully'})
+
+@app.route('/inventory/<int:item_id>', methods=['DELETE'])
+def delete_item(item_id):
+    connection = create_connection()
+    cursor = connection.cursor()
+    cursor.execute("DELETE FROM items WHERE Id=%s" %(item_id,))
+    connection.commit()
+    if cursor.rowcount == 0:
+        return jsonify({'message': 'Item not found'}), 404
+    return jsonify({'message': 'Item deleted successfully'})
 
 
 if __name__ == '__main__':
