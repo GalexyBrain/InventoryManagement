@@ -162,3 +162,21 @@ button:hover {
 .add-item-form button:hover {
     background-color: #0056b3;
 }
+
+/* Search bar styles */
+#search {
+    width: 100%;
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s;
+}
+
+#search:focus {
+    border-color: #007bff;
+    outline: none;
+}

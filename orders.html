@@ -28,16 +28,18 @@
         <div class="orders-container">
             <h1>Orders</h1>
             <div class="crud-buttons">
-                <button onclick="toggleAddOrderForm()">Add</button>
             </div>
             <div class="add-order-form">
                 <!-- Form for adding new order (will be shown/hidden dynamically) -->
-                <input type="number" name="orderId" placeholder="Order ID" required>
                 <input type="number" name="customerId" placeholder="Customer ID" required>
                 <input type="number" name="productId" placeholder="Product ID" required>
                 <input type="number" name="quantity" placeholder="Quantity" required>
-                <input type="number" name="price" placeholder="Price" required>
-                <button>Add Order</button>
+                <select name="type" required>
+                    <option value="" disabled selected>Select Type</option>
+                    <option value="p">Purchase</option>
+                    <option value="s">Sale</option>
+                </select>
+                <button id="submit">Add Order</button>
             </div>
             <input type="text" id="search" placeholder="Search...">
             <div class="orders-list">
