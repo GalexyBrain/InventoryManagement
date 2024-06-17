@@ -73,12 +73,12 @@ CREATE TABLE IF NOT EXISTS `InventoryManagement`.`Transactions` (
     FOREIGN KEY (`ProductId`)
     REFERENCES `InventoryManagement`.`items` (`Id`)
     ON DELETE SET NULL
-    ON UPDATE SET NULL,
+    ON UPDATE CASCADE,
   CONSTRAINT `CustomerId`
     FOREIGN KEY (`CustomerId`)
     REFERENCES `InventoryManagement`.`Customers` (`Id`)
     ON DELETE SET NULL
-    ON UPDATE SET NULL)
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
