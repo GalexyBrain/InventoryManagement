@@ -20,7 +20,7 @@ def create_connection():
     connection = mysql.connector.connect(
         host='localhost',
         user='Thejus',
-        password='root',
+        password='password',
         database='InventoryManagement'
     )
     return connection
@@ -38,13 +38,13 @@ def login():
     connection = mysql.connector.connect(
         host='localhost',
         user='Thejus',
-        password='root',
+        password='password',
         database='InventoryManagement'
     )
     cursor = connection.cursor(dictionary=True)
     
     try:
-        query = "SELECT * FROM users WHERE UserId = %s AND Password = %s"
+        query = "SELECT * FROM Users WHERE UserId = %s AND Password = %s"
         cursor.execute(query, (username, password))
         user = cursor.fetchone()
 
@@ -74,18 +74,18 @@ def register():
     connection = mysql.connector.connect(
         host='localhost',
         user='Thejus',
-        password='root',
+        password='password',
         database='InventoryManagement'
     )
     cursor = connection.cursor(dictionary=True)
     
     try:
-        query = "SELECT * FROM users WHERE UserId = %s"
+        query = "SELECT * FROM Users WHERE UserId = %s"
         cursor.execute(query, (username,))
         user = cursor.fetchone()
 
         if not user:
-            insert_query = "INSERT INTO users (UserId, Password, Email) VALUES (%s, %s, %s)"
+            insert_query = "INSERT INTO Users (UserId, Password, Email) VALUES (%s, %s, %s)"
             cursor.execute(insert_query, (username, password, email))
             connection.commit()
             return jsonify({'message': 'Registration successful'}), 200
@@ -100,13 +100,6 @@ def register():
         cursor.close()
         connection.close()
         
-        
-metrics_data = {
-    'products_count': 10,
-    'orders_count': 20,
-    'customers_count': 30,
-    'revenue': 5000
-}
 
 # Endpoint to get all metrics
 @app.route('/metrics')
@@ -117,9 +110,9 @@ def get_metrics():
     cursor.execute('''
         SELECT 
             (SELECT COUNT(Id) FROM items) AS products_count,
-            (SELECT COUNT(Id) FROM transactions) AS orders_count,
-            (SELECT COUNT(Id) FROM customers) AS customers_count,
-            (SELECT SUM(Price * Quantity) FROM transactions) AS revenue
+            (SELECT COUNT(Id) FROM Transactions) AS orders_count,
+            (SELECT COUNT(Id) FROM Customers) AS customers_count,
+            (SELECT SUM(Price * Quantity) FROM Transactions) AS revenue
     ''')
     
     metrics_data = cursor.fetchone()
@@ -139,7 +132,7 @@ def get_metrics():
 def get_customers():
     connection = create_connection()
     cursor = connection.cursor(dictionary=True)
-    cursor.execute('SELECT * FROM customers')
+    cursor.execute('SELECT * FROM Customers')
     customers = cursor.fetchall()
     print(customers)
     return jsonify({'customers': customers})
@@ -152,7 +145,7 @@ def add_customer():
     
     try:
         # Check if customer already exists
-        cursor.execute("SELECT * FROM customers WHERE id = %s", (new_customer['Id'],))
+        cursor.execute("SELECT * FROM Customers WHERE id = %s", (new_customer['Id'],))
         
         if cursor.fetchone() is not None:
             connection.close()
@@ -160,7 +153,7 @@ def add_customer():
         
         # Insert new customer
         cursor.execute(
-            "INSERT INTO customers (id, name, phone, email) VALUES (%s, '%s', %s, '%s')" %(new_customer['Id'], new_customer['Name'], new_customer['Phone'], new_customer['Email'])
+            "INSERT INTO Customers (id, name, phone, email) VALUES (%s, '%s', %s, '%s')" %(new_customer['Id'], new_customer['Name'], new_customer['Phone'], new_customer['Email'])
         )
         
         connection.commit()
@@ -176,8 +169,8 @@ def update_customer(customer_id):
     updated_customer = request.json
     connection = create_connection()
     cursor = connection.cursor()
-    print("UPDATE customers SET name='%s', email='%s', phone=%s WHERE id=%s" %(updated_customer['Name'], updated_customer['Email'], updated_customer['Phone'], customer_id))
-    cursor.execute("UPDATE customers SET name='%s', email='%s', phone=%s WHERE id=%s" %(updated_customer['Name'], updated_customer['Email'], updated_customer['Phone'], customer_id))
+    print("UPDATE Customers SET name='%s', email='%s', phone=%s WHERE id=%s" %(updated_customer['Name'], updated_customer['Email'], updated_customer['Phone'], customer_id))
+    cursor.execute("UPDATE Customers SET name='%s', email='%s', phone=%s WHERE id=%s" %(updated_customer['Name'], updated_customer['Email'], updated_customer['Phone'], customer_id))
     connection.commit()
     connection.close()
     return jsonify({'message': 'Customer updated successfully'}), 200
@@ -186,7 +179,7 @@ def update_customer(customer_id):
 def delete_customer(customer_id):
     connection = create_connection()
     cursor = connection.cursor()
-    cursor.execute('DELETE FROM customers WHERE id=%s', (customer_id,))
+    cursor.execute('DELETE FROM Customers WHERE id=%s', (customer_id,))
     connection.commit()
     return jsonify({'message': 'Customer deleted successfully'})
 
@@ -222,13 +215,13 @@ def add_item():
     )
     connection.commit()
     
-    cursor.execute("SELECT MAX(Id) FROM transactions")
+    cursor.execute("SELECT MAX(Id) FROM Transactions")
     id_result = cursor.fetchone()
     id = id_result[0] if id_result[0] is not None else 0
     id += 1
 
     
-    cursor.execute("INSERT INTO transactions (Id, Price, Quantity, ProductId, Type) VALUES (%s, %s, %s, %s, 'p')" %(id, data['price'], data['qty'], data['id']))
+    cursor.execute("INSERT INTO Transactions (Id, Price, Quantity, ProductId, Type) VALUES (%s, %s, %s, %s, 'p')" %(id, data['price'], data['qty'], data['id']))
     connection.commit()
     connection.close()
     return jsonify({'message': 'Item added successfully'}), 201
@@ -269,13 +262,13 @@ def restock_item(item_id):
     if not connection:
         return jsonify({'message': 'Failed to connect to database'}), 500
     
-    cursor.execute("SELECT MAX(Id) AS Id FROM transactions")
+    cursor.execute("SELECT MAX(Id) AS Id FROM Transactions")
     id_result = cursor.fetchone()
     id = id_result['Id'] if id_result['Id'] is not None else 0
     id += 1
 
     
-    cursor.execute("INSERT INTO transactions (Id, Price, Quantity, ProductId, Type) VALUES (%s, %s, %s, %s, 'p')" %(id, data['price'], data['qty'], data['id']))
+    cursor.execute("INSERT INTO Transactions (Id, Price, Quantity, ProductId, Type) VALUES (%s, %s, %s, %s, 'p')" %(id, data['price'], data['qty'], data['id']))
 
     connection.commit()
     connection.close()
@@ -296,7 +289,7 @@ def get_orders():
     connection = create_connection()
     cursor = connection.cursor(dictionary=True)
 
-    cursor.execute("SELECT * FROM transactions")
+    cursor.execute("SELECT * FROM Transactions")
     orders = cursor.fetchall()
 
     cursor.close()
@@ -316,7 +309,7 @@ def add_order():
     connection = create_connection()
     cursor = connection.cursor()
     
-    cursor.execute("select max(id) as id from transactions ")
+    cursor.execute("select max(id) as id from Transactions ")
     id_result = cursor.fetchone()
     orderId = id_result[0] if id_result[0] is not None else 0
     orderId += 1
@@ -343,7 +336,7 @@ def add_order():
     
     try:
         cursor.execute(
-            "INSERT INTO transactions (id, customerId, productId, quantity, price, Type) VALUES (%s, %s, %s, %s, %s, '%s')" %(orderId, customerId, productId, quantity, price, orderType)
+            "INSERT INTO Transactions (id, customerId, productId, quantity, price, Type) VALUES (%s, %s, %s, %s, %s, '%s')" %(orderId, customerId, productId, quantity, price, orderType)
         )
         connection.commit()
     
@@ -371,13 +364,13 @@ def update_settings():
     cursor = connection.cursor()
 
     # Verify current password
-    cursor.execute("SELECT password FROM users WHERE userId = %s", (username,))
+    cursor.execute("SELECT password FROM Users WHERE userId = %s", (username,))
     user = cursor.fetchone()
     if not user or user[0] != current_password:
         return jsonify({'message': 'Current password is incorrect'}), 400
 
     # Update user settings
-    cursor.execute("UPDATE users SET email = %s, password = %s WHERE userId = %s",
+    cursor.execute("UPDATE Users SET email = %s, password = %s WHERE userId = %s",
                    (email, new_password, username))
     connection.commit()
 
