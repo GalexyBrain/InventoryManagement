@@ -8,4 +8,4 @@
   - Make sure u have mysql installed with the user `Thejus` and password `password` with dba perms. (if not then ask chat gpt to make one)
   - open the `SQLDatabase.sql` file and execute all commands in it.
   - In vs code download the extension `liveServer` and run the first page through it
-  - after this run the api and enjo.
+  - after this run the api and enjoy.
