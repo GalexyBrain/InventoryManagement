@@ -112,7 +112,7 @@ def get_metrics():
             (SELECT COUNT(Id) FROM items) AS products_count,
             (SELECT COUNT(Id) FROM Transactions) AS orders_count,
             (SELECT COUNT(Id) FROM Customers) AS customers_count,
-            (SELECT SUM(Price * Quantity) FROM Transactions) AS revenue
+            (SELECT SUM(Price * Quantity) FROM Transactions where Type = 'S') AS revenue
     ''')
     
     metrics_data = cursor.fetchone()

@@ -172,3 +172,21 @@ document.getElementById('search').addEventListener('input', function () {
 
 // Initial display of customers
 fetchCustomers();
+
+document.getElementById('logout').addEventListener('click', function(event) {
+    event.preventDefault();
+
+    fetch('http://127.0.0.1:5000/logout')
+    .then(response => {
+        if (response.ok) {
+            alert('Logout successful.');
+            window.location.href = 'login.html';  // Redirect to login page
+        } else {
+            alert('Logout failed. Please try again.');
+        }
+    })
+    .catch(error => {
+        console.error('Error during logout:', error);
+        alert('Error during logout. Please try again.');
+    });
+});
