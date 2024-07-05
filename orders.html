@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders</title>
+    <link rel="stylesheet" href="orders.css">
+</head>
+<body>
+
+<header>
+    Inventory Management Dashboard
+</header>
+
+<div class="container">
+    <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="inventory.html">Inventory</a>
+        <a href="orders.html">Orders</a>
+        <a href="products.html">Products</a>
+        <a href="customers.html">Customers</a>
+        <a href="reports.html">Reports</a>
+        <a href="settings.html">Settings</a>
+        <a href="login.html">Logout</a>
+    </nav>
+    
+    <main>
+        <div class="orders-container">
+            <h1>Orders</h1>
+            <div class="crud-buttons">
+            </div>
+            <div class="add-order-form">
+                <input type="number" name="customerId" placeholder="Customer ID" required>
+                <div id="order-items">
+                    <div class="order-item">
+                        <input type="text" name="productName" placeholder="Product Name" required>
+                        <input type="number" name="productId" placeholder="Product ID" required>
+                        <input type="number" name="quantity" placeholder="Quantity" required>
+                        <select name="type" required>
+                            <option value="" disabled selected>Select Type</option>
+                            <option value="p">Purchase</option>
+                            <option value="s">Sale</option>
+                        </select>
+                    </div>
+                </div>
+                <button id="add-item">Add Another Item</button>
+                <button id="submit">Add Order</button>
+            </div>
+            <input type="text" id="search" placeholder="Search...">
+            <div class="orders-list">
+                <!-- Orders will be displayed here -->
+            </div>
+        </div>
+        <div id="bill-details" style="display:none;">
+            <h2>Bill Details</h2>
+            <div id="bill-content"></div>
+        </div>
+    </main>
+</div>
+
+<script src="orders.js"></script>
+</body>
+</html>
