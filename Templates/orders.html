@@ -31,16 +31,15 @@
             </div>
             <div class="add-order-form">
                 <input type="number" name="customerId" placeholder="Customer ID" required>
+                <select name="type" required>
+                    <option value="" disabled selected>Select Type</option>
+                    <option value="p">Purchase</option>
+                    <option value="s">Sale</option>
+                </select>
                 <div id="order-items">
                     <div class="order-item">
-                        <input type="text" name="productName" placeholder="Product Name" required>
                         <input type="number" name="productId" placeholder="Product ID" required>
                         <input type="number" name="quantity" placeholder="Quantity" required>
-                        <select name="type" required>
-                            <option value="" disabled selected>Select Type</option>
-                            <option value="p">Purchase</option>
-                            <option value="s">Sale</option>
-                        </select>
                     </div>
                 </div>
                 <button id="add-item">Add Another Item</button>
