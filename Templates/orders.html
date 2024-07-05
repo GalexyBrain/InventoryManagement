@@ -21,7 +21,7 @@
         <a href="customers.html">Customers</a>
         <a href="reports.html">Reports</a>
         <a href="settings.html">Settings</a>
-        <a href="#" id="logout">Logout</a>
+        <a href="login.html">Logout</a>
     </nav>
     
     <main>
@@ -30,21 +30,30 @@
             <div class="crud-buttons">
             </div>
             <div class="add-order-form">
-                <!-- Form for adding new order (will be shown/hidden dynamically) -->
                 <input type="number" name="customerId" placeholder="Customer ID" required>
-                <input type="number" name="productId" placeholder="Product ID" required>
-                <input type="number" name="quantity" placeholder="Quantity" required>
-                <select name="type" required>
-                    <option value="" disabled selected>Select Type</option>
-                    <option value="p">Purchase</option>
-                    <option value="s">Sale</option>
-                </select>
+                <div id="order-items">
+                    <div class="order-item">
+                        <input type="text" name="productName" placeholder="Product Name" required>
+                        <input type="number" name="productId" placeholder="Product ID" required>
+                        <input type="number" name="quantity" placeholder="Quantity" required>
+                        <select name="type" required>
+                            <option value="" disabled selected>Select Type</option>
+                            <option value="p">Purchase</option>
+                            <option value="s">Sale</option>
+                        </select>
+                    </div>
+                </div>
+                <button id="add-item">Add Another Item</button>
                 <button id="submit">Add Order</button>
             </div>
             <input type="text" id="search" placeholder="Search...">
             <div class="orders-list">
                 <!-- Orders will be displayed here -->
             </div>
+        </div>
+        <div id="bill-details" style="display:none;">
+            <h2>Bill Details</h2>
+            <div id="bill-content"></div>
         </div>
     </main>
 </div>

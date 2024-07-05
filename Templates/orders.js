@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
     fetchOrders();
     document.getElementById('search').addEventListener('input', searchOrders);
     document.getElementById('submit').addEventListener('click', addOrder);
+    document.getElementById('add-item').addEventListener('click', addItem);
 });
 
 async function fetchOrders() {
@@ -43,39 +44,70 @@ function createOrderElement(order) {
     const customerId = document.createElement('p');
     customerId.textContent = `Customer ID: ${order.CustomerId}`;
 
-    const productId = document.createElement('p');
-    productId.textContent = `Product ID: ${order.ProductId}`;
+    order.Items.forEach(item => {
+        const productName = document.createElement('p');
+        productName.textContent = `Product Name: ${item.ProductName}`;
+        
+        const productId = document.createElement('p');
+        productId.textContent = `Product ID: ${item.ProductId}`;
 
-    const quantity = document.createElement('p');
-    quantity.textContent = `Quantity: ${order.Quantity}`;
+        const quantity = document.createElement('p');
+        quantity.textContent = `Quantity: ${item.Quantity}`;
 
-    const price = document.createElement('p');
-    price.textContent = `Price: $${order.Price}`;
+        const type = document.createElement('p');
+        type.textContent = `Type: ${item.Type === 'p' ? 'Purchase' : 'Sale'}`;
 
-    const type = document.createElement('p');
-    type.textContent = `Type: ${order.Type === 'p' ? 'Purchase' : 'Sale'}`;
+        orderInfo.appendChild(productName);
+        orderInfo.appendChild(productId);
+        orderInfo.appendChild(quantity);
+        orderInfo.appendChild(type);
+    });
 
-    orderInfo.appendChild(customerId);
-    orderInfo.appendChild(productId);
-    orderInfo.appendChild(quantity);
-    orderInfo.appendChild(price);
-    orderInfo.appendChild(type);
+    const generateBillButton = document.createElement('button');
+    generateBillButton.textContent = 'Generate Bill';
+    generateBillButton.addEventListener('click', () => generateBill(order));
 
     orderElement.appendChild(orderId);
     orderElement.appendChild(orderInfo);
+    orderElement.appendChild(generateBillButton);
 
     return orderElement;
+}
+
+function addItem(e) {
+    e.preventDefault();
+    const orderItemsContainer = document.getElementById('order-items');
+    const newItem = document.createElement('div');
+    newItem.classList.add('order-item');
+    newItem.innerHTML = `
+        <input type="text" name="productName" placeholder="Product Name" required>
+        <input type="number" name="productId" placeholder="Product ID" required>
+        <input type="number" name="quantity" placeholder="Quantity" required>
+        <select name="type" required>
+            <option value="" disabled selected>Select Type</option>
+            <option value="p">Purchase</option>
+            <option value="s">Sale</option>
+        </select>
+    `;
+    orderItemsContainer.appendChild(newItem);
 }
 
 async function addOrder(e) {
     e.preventDefault();
 
     const customerId = document.querySelector('input[name="customerId"]').value;
-    const productId = document.querySelector('input[name="productId"]').value;
-    const quantity = document.querySelector('input[name="quantity"]').value;
-    const type = document.querySelector('select[name="type"]').value;
+    const orderItems = document.querySelectorAll('.order-item');
 
-    const newOrder = { customerId, productId, quantity, type };
+    const items = [];
+    orderItems.forEach(item => {
+        const productName = item.querySelector('input[name="productName"]').value;
+        const productId = item.querySelector('input[name="productId"]').value;
+        const quantity = item.querySelector('input[name="quantity"]').value;
+        const type = item.querySelector('select[name="type"]').value;
+        items.push({ productName, productId, quantity, type });
+    });
+
+    const newOrder = { customerId, items };
 
     try {
         const response = await fetch('http://127.0.0.1:5000/orders', {
@@ -93,9 +125,18 @@ async function addOrder(e) {
 
         alert('Order added successfully.');
         document.querySelector('input[name="customerId"]').value = '';
-        document.querySelector('input[name="productId"]').value = '';
-        document.querySelector('input[name="quantity"]').value = '';
-        document.querySelector('select[name="type"]').value = '';
+        document.getElementById('order-items').innerHTML = `
+            <div class="order-item">
+                <input type="text" name="productName" placeholder="Product Name" required>
+                <input type="number" name="productId" placeholder="Product ID" required>
+                <input type="number" name="quantity" placeholder="Quantity" required>
+                <select name="type" required>
+                    <option value="" disabled selected>Select Type</option>
+                    <option value="p">Purchase</option>
+                    <option value="s">Sale</option>
+                </select>
+            </div>
+        `;
         fetchOrders(); // Fetch and display updated orders
     } catch (error) {
         console.error('Error adding order:', error);
@@ -103,29 +144,37 @@ async function addOrder(e) {
     }
 }
 
+function generateBill(order) {
+    let billContent = `<p>Customer ID: ${order.CustomerId}</p>`;
+    let totalCost = 0;
+
+    order.Items.forEach((item, index) => {
+        const price = Math.floor(Math.random() * 100) + 1; // Assuming random price for demonstration
+        totalCost += price * item.Quantity;
+
+        billContent += `
+            <p>Item ${index + 1}:</p>
+            <p>Product Name: ${item.ProductName}</p>
+            <p>Product ID: ${item.ProductId}</p>
+            <p>Quantity: ${item.Quantity}</p>
+            <p>Type: ${item.Type === 'p' ? 'Purchase' : 'Sale'}</p>
+            <p>Price: $${price}</p>
+            <p>Cost: $${price * item.Quantity}</p>
+            <hr>
+        `;
+    });
+
+    billContent += `<p>Total Cost: $${totalCost}</p>`;
+
+    document.getElementById('bill-content').innerHTML = billContent;
+    document.getElementById('bill-details').style.display = 'block';
+}
+
 function searchOrders() {
     const searchText = this.value.toLowerCase();
     const filteredOrders = orders.filter(order => {
         return order.CustomerId.toLowerCase().includes(searchText) ||
-            order.ProductId.toLowerCase().includes(searchText);
+            order.Items.some(item => item.ProductId.toLowerCase().includes(searchText));
     });
     displayOrders(filteredOrders);
 }
-
-document.getElementById('logout').addEventListener('click', function(event) {
-    event.preventDefault();
-
-    fetch('http://127.0.0.1:5000/logout')
-    .then(response => {
-        if (response.ok) {
-            alert('Logout successful.');
-            window.location.href = 'login.html';  // Redirect to login page
-        } else {
-            alert('Logout failed. Please try again.');
-        }
-    })
-    .catch(error => {
-        console.error('Error during logout:', error);
-        alert('Error during logout. Please try again.');
-    });
-});
