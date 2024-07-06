@@ -56,7 +56,7 @@ function createOrderElement(order) {
     type.textContent = `Type: ${order.Type === 'p' ? 'Purchase' : 'Sale'}`;
 
     const generateBillButton = document.createElement('button');
-    generateBillButton.textContent = 'Generate Bill';
+    generateBillButton.textContent = 'Show Bill';
     generateBillButton.addEventListener('click', () => generateBill(order));
 
     orderInfo.appendChild(customerId);

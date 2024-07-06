@@ -271,7 +271,7 @@ def restock_item(item_id):
     cursor = connection.cursor(dictionary=True)
 
     # Check if item exists and get the current quantity
-    cursor.execute("SELECT Quantity FROM ITEMS WHERE Id = %s", (item_id,))
+    cursor.execute("SELECT Quantity, Price FROM ITEMS WHERE Id = %s", (item_id,))
     item = cursor.fetchone()
     if not item:
         connection.close()
@@ -279,6 +279,7 @@ def restock_item(item_id):
 
     # Calculate new quantity
     new_qty = int(item['Quantity']) + int(data['qty'])
+    price = int(item['Price'])
 
     # Update the quantity of the item
     cursor.execute("UPDATE ITEMS SET Quantity = %s WHERE Id = %s", (new_qty, item_id))
@@ -287,7 +288,7 @@ def restock_item(item_id):
     # Insert new transaction into TRANSACTIONS table
     cursor.execute(
         "INSERT INTO TRANSACTIONS (CustomerId, Type, TotalPrice) VALUES (NULL, 'p', %s)",
-        (int(data['price']) * int(data['qty']),)
+        (price * int(data['qty']),)
     )
 
     # Get the last inserted transaction id
@@ -468,7 +469,7 @@ def get_transaction_details(transaction_id):
                 i.Price
             FROM TRANSACTIONS t
             INNER JOIN TRANSACTION_ITEMS ti ON t.Id = ti.TransactionId
-            INNER JOIN ITEMS i ON ti.ItemId = i.Id
+            LEFT OUTER JOIN ITEMS i ON ti.ItemId = i.Id
             WHERE t.Id = %s
         """
 
