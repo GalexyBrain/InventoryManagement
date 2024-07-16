@@ -16,8 +16,6 @@ def loginRequired(func):
 
 @loginRequired
 def create_connection():
-    global user
-    global password
     connection = mysql.connector.connect(
         host='localhost',
         user='root',
@@ -36,9 +34,6 @@ def login():
     data = request.json
     username = data.get('username').strip()
     password = data.get('password').strip()
-    
-    global user
-
     
     connection = mysql.connector.connect(
         host='localhost',
@@ -77,9 +72,6 @@ def register():
     password = data.get('password').strip()
     email = data.get('email').strip()
     
-    global user
-
-    
     connection = mysql.connector.connect(
         host='localhost',
         user='root',
@@ -113,7 +105,6 @@ def register():
 
 # Endpoint to get all metrics
 @app.route('/metrics')
-@loginRequired
 def get_metrics():
     connection = create_connection()
     cursor = connection.cursor()
@@ -178,7 +169,6 @@ def update_customer(customer_id):
     updated_customer = request.json
     connection = create_connection()
     cursor = connection.cursor()
-    print("UPDATE CUSTOMERS SET name='%s', email='%s', phone=%s WHERE id=%s" %(updated_customer['Name'], updated_customer['Email'], updated_customer['Phone'], customer_id))
     cursor.execute("UPDATE CUSTOMERS SET name='%s', email='%s', phone=%s WHERE id=%s" %(updated_customer['Name'], updated_customer['Email'], updated_customer['Phone'], customer_id))
     connection.commit()
     connection.close()
@@ -523,7 +513,6 @@ def get_transaction_details(transaction_id):
 # Flask route to fetch transaction details
 @app.route('/api/orders/<int:transaction_id>', methods=['GET'])
 def get_transaction(transaction_id):
-    print(transaction_id)
     transaction = get_transaction_details(transaction_id)
     if transaction:
         return jsonify(transaction), 200
