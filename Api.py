@@ -6,7 +6,6 @@ from mysql.connector import Error
 authenticated_users = list()  # Use set for faster membership checks
 current_user = None
 
-
 def loginRequired(func):
     def wrapper(*args, **kwargs):
         # Check if user is logged in
@@ -17,11 +16,14 @@ def loginRequired(func):
 
 @loginRequired
 def create_connection():
+    global user
+    global password
     connection = mysql.connector.connect(
         host='localhost',
-        user='Thejus',
-        password='password',
-        database='InventoryManagement'
+        user='root',
+        password='root',
+        database='InventoryManagement',
+        auth_plugin='mysql_native_password'
     )
     return connection
 
@@ -35,11 +37,15 @@ def login():
     username = data.get('username').strip()
     password = data.get('password').strip()
     
+    global user
+
+    
     connection = mysql.connector.connect(
         host='localhost',
-        user='Thejus',
-        password='password',
-        database='InventoryManagement'
+        user='root',
+        password='root',
+        database='InventoryManagement',
+        auth_plugin='mysql_native_password'
     )
     cursor = connection.cursor(dictionary=True)
     
@@ -71,11 +77,15 @@ def register():
     password = data.get('password').strip()
     email = data.get('email').strip()
     
+    global user
+
+    
     connection = mysql.connector.connect(
         host='localhost',
-        user='Thejus',
-        password='password',
-        database='InventoryManagement'
+        user='root',
+        password='root',
+        database='InventoryManagement',
+        auth_plugin='mysql_native_password'
     )
     cursor = connection.cursor(dictionary=True)
     
