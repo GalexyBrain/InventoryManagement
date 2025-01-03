@@ -9,7 +9,7 @@ document.querySelector('.add-item-form').addEventListener('submit', async functi
     const price = e.target.elements.price.value;
 
     try {
-        const response = await fetch('http://127.0.0.1:5000/inventory', {
+        const response = await fetch('http://13.201.225.19:80/inventory', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -31,7 +31,7 @@ document.querySelector('.add-item-form').addEventListener('submit', async functi
 
 async function fetchInventory() {
     try {
-        const response = await fetch('http://127.0.0.1:5000/inventory');
+        const response = await fetch('http://13.201.225.19:80/inventory');
         const data = await response.json();
         inventory = data.inventory;
         renderInventory();

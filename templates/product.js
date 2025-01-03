@@ -9,7 +9,7 @@ document.querySelector('.add-item-form').addEventListener('submit', async functi
     const price = e.target.elements.price.value;
 
     try {
-        const response = await fetch('http://127.0.0.1:5000/inventory', {
+        const response = await fetch('http://13.201.225.19:80/inventory', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -31,7 +31,7 @@ document.querySelector('.add-item-form').addEventListener('submit', async functi
 
 async function fetchInventory() {
     try {
-        const response = await fetch('http://127.0.0.1:5000/inventory');
+        const response = await fetch('http://13.201.225.19:80/inventory');
         const data = await response.json();
         inventory = data.inventory;
         renderInventory();
@@ -70,7 +70,7 @@ async function editItem(index) {
     const newPrice = prompt("Enter new price:", item.Price);
 
     try {
-        const response = await fetch(`http://127.0.0.1:5000/inventory/${item.Id}`, {
+        const response = await fetch(`http://13.201.225.19:80/inventory/${item.Id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -93,7 +93,7 @@ async function restockItem(index) {
     const additionalQty = prompt("Enter quantity to add:", 0);
 
     try {
-        const response = await fetch(`http://127.0.0.1:5000/inventory/${item.Id}`, {
+        const response = await fetch(`http://13.201.225.19:80/inventory/${item.Id}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
@@ -116,7 +116,7 @@ async function deleteItem(index) {
 
     if (confirm("Are you sure you want to delete this item?")) {
         try {
-            const response = await fetch(`http://127.0.0.1:5000/inventory/${item.Id}`, {
+            const response = await fetch(`http://13.201.225.19:80/inventory/${item.Id}`, {
                 method: 'DELETE'
             });
 
