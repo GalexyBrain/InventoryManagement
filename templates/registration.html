@@ -41,28 +41,53 @@
             const password = document.getElementById("password").value;
             const confirmPassword = document.getElementById("confirmPassword").value;
 
+            // Clear previous error messages
+            document.getElementById("confirmPasswordError").textContent = '';
+
+            // Check if passwords match
             if (password !== confirmPassword) {
                 document.getElementById("confirmPasswordError").textContent = "Passwords do not match";
                 return;
             }
 
+            // Prepare the request body
+            const requestBody = {
+                username: username,
+                email: email,
+                password: password
+            };
+
+            // Make the fetch call
             fetch('http://15.207.222.240/api/register', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',  // Make sure the content is sent as JSON
+                    'X-Requested-With': 'XMLHttpRequest',  // Optional: Identifies the request as an AJAX request
+                    'Accept': 'application/json'  // Make sure the server returns JSON response
                 },
-                body: JSON.stringify({ username: username, email: email, password: password })
+                body: JSON.stringify(requestBody)  // Convert the body to JSON
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Response Status:', response.status);  // Log the status code
+                return response.json();  // Parse the JSON response
+            })
             .then(data => {
-                alert(data.message);
-                window.location.href = 'login.html'; // Redirect to login page
-
+                console.log('Response Data:', data);  // Log the response data
+                if (data.success) {
+                    alert(data.message);  // Success message from the server
+                    window.location.href = 'login.html';  // Redirect to login page
+                } else {
+                    alert(data.message);  // Display error message from the server
+                }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);
+                alert("An error occurred. Please try again later.");
+            });
         });
     });
 </script>
 
 </body>
 </html>
+
