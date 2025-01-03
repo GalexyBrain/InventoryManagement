@@ -19,8 +19,8 @@ def loginRequired(func):
 def create_connection():
     connection = mysql.connector.connect(
         host='localhost',
-        user='Thejus',
-        password='root',
+        user='rootUser',
+        password='rootUser@123',
         database='InventoryManagement'
     )
     return connection
@@ -37,8 +37,8 @@ def login():
     
     connection = mysql.connector.connect(
         host='localhost',
-        user='Thejus',
-        password='root',
+        user='rootUser',
+        password='rootUser@123',
         database='InventoryManagement'
     )
     cursor = connection.cursor(dictionary=True)
@@ -73,8 +73,8 @@ def register():
     
     connection = mysql.connector.connect(
         host='localhost',
-        user='Thejus',
-        password='root',
+        user='rootUser',
+        password='rootUser@123',
         database='InventoryManagement'
     )
     cursor = connection.cursor(dictionary=True)
