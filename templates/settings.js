@@ -13,7 +13,7 @@ document.getElementById('settingsForm').addEventListener('submit', async functio
     }
 
     try {
-        const response = await fetch('http://13.201.225.19:80/update_settings', {
+        const response = await fetch('http://13.201.225.19/api/update_settings', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

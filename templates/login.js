@@ -7,8 +7,8 @@ document.getElementById("loginForm").addEventListener("submit", function (event)
     // Create a new XMLHttpRequest object
     var xhr = new XMLHttpRequest();
 
-    // Configure it: POST-request for the URL http://13.201.225.19:80/login
-    xhr.open('POST', 'http://13.201.225.19:80/login', true);
+    // Configure it: POST-request for the URL http://13.201.225.19/api/login
+    xhr.open('POST', 'http://13.201.225.19/api/login', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
 
     // Setup our listener to process completed requests
