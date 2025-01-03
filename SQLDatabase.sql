@@ -1,51 +1,62 @@
-USE `InventoryManagement`;
+CREATE SCHEMA IF NOT EXISTS `InventoryManagement` DEFAULT CHARACTER SET utf8 ;
+USE `InventoryManagement` ;
 
--- Create Users Table
-CREATE TABLE IF NOT EXISTS `Users` (
+-- -----------------------------------------------------
+-- Table `InventoryManagement`.`Users`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `users` (
   `UserId` VARCHAR(25) NOT NULL,
   `Password` VARCHAR(25) NULL,
   `Email` VARCHAR(45) NULL,
-  PRIMARY KEY (`UserId`)
-);
+  PRIMARY KEY (`UserId`))
+ENGINE = InnoDB;
 
--- Create Customers Table
-CREATE TABLE IF NOT EXISTS `Customers` (
-  `Id` INT NOT NULL AUTO_INCREMENT,
+
+-- -----------------------------------------------------
+-- Table `InventoryManagement`.`Customers`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `customers` (
+  `Id` INT NOT NULL,
   `Name` VARCHAR(45) NULL,
   `Phone` INT NULL,
   `Email` VARCHAR(45) NULL,
-  PRIMARY KEY (`Id`)
-);
+  PRIMARY KEY (`Id`))
+ENGINE = InnoDB;
 
--- Create Items Table
-CREATE TABLE IF NOT EXISTS `Items` (
-  `Id` INT NOT NULL AUTO_INCREMENT,
+
+-- -----------------------------------------------------
+-- Table `InventoryManagement`.`items`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `items` (
+  `Id` INT NOT NULL,
   `Name` VARCHAR(45) NULL,
   `Quantity` INT NULL,
   `Price` INT NULL,
-  PRIMARY KEY (`Id`)
-);
+  PRIMARY KEY (`Id`))
+ENGINE = InnoDB;
 
--- Create Transactions Table
-CREATE TABLE IF NOT EXISTS `Transactions` (
-  `Id` INT NOT NULL AUTO_INCREMENT,
+
+-- -----------------------------------------------------
+-- Table `InventoryManagement`.`Transactions`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `transactions` (
+  `Id` INT NOT NULL,
   `ProductId` INT NULL,
   `CustomerId` INT NULL,
   `Price` INT NULL,
   `Quantity` INT NULL,
   `Type` VARCHAR(1) NULL,
   PRIMARY KEY (`Id`),
-  INDEX `CustomerId_idx` (`CustomerId` ASC),
-  INDEX `ItemId_idx` (`ProductId` ASC),
+  INDEX `CustomerId_idx` (`CustomerId` ASC) VISIBLE,
+  INDEX `ItemId_idx` (`ProductId` ASC) VISIBLE,
   CONSTRAINT `ItemId`
     FOREIGN KEY (`ProductId`)
-    REFERENCES `Items` (`Id`)
+    REFERENCES `items` (`Id`)
     ON DELETE SET NULL
     ON UPDATE SET NULL,
   CONSTRAINT `CustomerId`
     FOREIGN KEY (`CustomerId`)
-    REFERENCES `Customers` (`Id`)
+    REFERENCES `customers` (`Id`)
     ON DELETE SET NULL
-    ON UPDATE SET NULL
-);
-
+    ON UPDATE SET NULL)
+ENGINE = InnoDB;
