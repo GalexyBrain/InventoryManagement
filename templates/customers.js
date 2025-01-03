@@ -47,7 +47,7 @@ function displayCustomers(filteredCustomers = []) {
 // Function to fetch customers from API
 async function fetchCustomers() {
     try {
-        const response = await fetch('http://13.201.225.19/api/customers');
+        const response = await fetch('http://15.207.222.240/api/customers');
         const data = await response.json();
         customers = data.customers;  // Assign fetched customers to the global variable
         displayCustomers(customers);
@@ -64,7 +64,7 @@ async function addCustomer() {
     const customerPhone = document.querySelector('input[name="customerPhone"]').value;
 
     try {
-        const response = await fetch('http://13.201.225.19/api/customers', {
+        const response = await fetch('http://15.207.222.240/api/customers', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -107,7 +107,7 @@ async function editCustomer(customerId) {
     const newCustomerPhone = prompt("Enter new phone:", customer.Phone);
 
     try {
-        const response = await fetch(`http://13.201.225.19/api/customers/${customerId}`, {
+        const response = await fetch(`http://15.207.222.240/api/customers/${customerId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -138,7 +138,7 @@ async function editCustomer(customerId) {
 async function deleteCustomer(customerId) {
     if (confirm("Are you sure you want to delete this customer?")) {
         try {
-            const response = await fetch(`http://13.201.225.19/api/customers/${customerId}`, {
+            const response = await fetch(`http://15.207.222.240/api/customers/${customerId}`, {
                 method: 'DELETE',
                 headers: {
                     'Access-Control-Allow-Origin': '*'

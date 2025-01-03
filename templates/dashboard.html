@@ -38,7 +38,7 @@
 
 <script>
     // Fetch data from API and update dashboard metrics
-    fetch('http://13.201.225.19/api/metrics')
+    fetch('http://15.207.222.240/api/metrics')
         .then(response => response.json())
         .then(data => {
             const metricsContainer = document.getElementById('metricsContainer');
@@ -62,7 +62,7 @@
     document.getElementById('logout').addEventListener('click', function(event) {
         event.preventDefault();
 
-        fetch('http://13.201.225.19/api/logout')
+        fetch('http://15.207.222.240/api/logout')
         .then(response => {
             if (response.ok) {
                 alert('Logout successful.');

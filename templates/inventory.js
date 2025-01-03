@@ -9,7 +9,7 @@ document.querySelector('.add-item-form').addEventListener('submit', async functi
     const price = e.target.elements.price.value;
 
     try {
-        const response = await fetch('http://13.201.225.19/api/inventory', {
+        const response = await fetch('http://15.207.222.240/api/inventory', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -31,7 +31,7 @@ document.querySelector('.add-item-form').addEventListener('submit', async functi
 
 async function fetchInventory() {
     try {
-        const response = await fetch('http://13.201.225.19/api/inventory');
+        const response = await fetch('http://15.207.222.240/api/inventory');
         const data = await response.json();
         inventory = data.inventory;
         renderInventory();

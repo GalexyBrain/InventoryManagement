@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 async function fetchOrders() {
     try {
-        const response = await fetch('http://13.201.225.19/api/orders');
+        const response = await fetch('http://15.207.222.240/api/orders');
         if (!response.ok) {
             throw new Error('Failed to fetch orders.');
         }
@@ -78,7 +78,7 @@ async function addOrder(e) {
     const newOrder = { customerId, productId, quantity, type };
 
     try {
-        const response = await fetch('http://13.201.225.19/api/orders', {
+        const response = await fetch('http://15.207.222.240/api/orders', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
