@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customers</title>
+    <link rel="stylesheet" href="customers.css">
+</head>
+<body>
+
+<header>
+    Inventory Management - Customers
+</header>
+
+<div class="container">
+    <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="inventory.html">Inventory</a>
+        <a href="orders.html">Orders</a>
+        <a href="products.html">Products</a>
+        <a href="customers.html">Customers</a>
+        <a href="reports.html">Reports</a>
+        <a href="settings.html">Settings</a>
+        <a href="logout.html">Logout</a>
+    </nav>
+    
+    <main>
+        <h2>Customer List</h2>
+        <input type="text" id="search" placeholder="Search customer by name">
+        <div class="crud-buttons">
+            <button onclick="toggleAddCustomerForm()">Add Customer</button>
+        </div>
+        <div class="add-customer-form" id="addCustomerForm" style="display: none;">
+            <input type="text" name="customerID" placeholder="Customer ID" required>
+            <input type="text" name="customerName" placeholder="Customer Name" required>
+            <input type="email" name="customerEmail" placeholder="Customer Email" required>
+            <input type="tel" name="customerPhone" placeholder="Customer Phone" required>
+            <button onclick="addCustomer()">Submit</button>
+        </div>
+        <div class="customer-list">
+            <!-- Customers will be displayed here -->
+        </div>
+    </main>
+</div>
+
+<script>
+    function toggleAddCustomerForm() {
+        const form = document.getElementById('addCustomerForm');
+        if (form.style.display === 'none' || form.style.display === '') {
+            form.style.display = 'block';
+        } else {
+            form.style.display = 'none';
+        }
+    }
+</script>
+
+<script src="customers.js"></script>
+</body>
+</html>

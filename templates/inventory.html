@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management</title>
+    <link rel="stylesheet" href="inventory.css">
+</head>
+<body>
+
+<header>
+    Inventory Management Dashboard
+</header>
+
+<div class="container">
+    <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="inventory.html">Inventory</a>
+        <a href="orders.html">Orders</a>
+        <a href="products.html">Products</a>
+        <a href="customers.html">Customers</a>
+        <a href="reports.html">Reports</a>
+        <a href="settings.html">Settings</a>
+        <a href="login.html">Logout</a>
+    </nav>
+    
+    <main>
+        <div class="inventory-container">
+            <h1>Inventory Management</h1>
+            <input type="text" id="search" placeholder="Search items by name">
+            <div class="inventory-list">
+                <!-- Inventory items will be added dynamically using JavaScript -->
+            </div>
+            <!-- Form for adding new item -->
+            <form class="add-item-form" action="#" method="post">
+                <input type="text" name="productId" placeholder="Product ID" required>
+                <input type="text" name="itemName" placeholder="Item Name" required>
+                <input type="number" name="quantity" placeholder="Quantity" required>
+                <input type="number" name="price" placeholder="Price" required>
+                <button type="submit">Add Item</button>
+            </form>
+        </div>
+    </main>
+</div>
+
+<script src="inventory.js"></script>
+
+</body>
+</html>
